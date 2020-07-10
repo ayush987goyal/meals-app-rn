@@ -4,6 +4,7 @@ import {
   createAppContainer,
   NavigationRouteConfigMap,
   NavigationRoute,
+  NavigationScreenConfig,
 } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import {
@@ -22,6 +23,17 @@ import CategoryMealsScreen from '../screens/CategoryMealsScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import Colors from '../constants/Colors';
+import { StackNavigationOptions } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+
+const defaultStackNavOptions: NavigationScreenConfig<
+  StackNavigationOptions,
+  any
+> = {
+  headerStyle: {
+    backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : '',
+  },
+  headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primaryColor,
+};
 
 const MealsNavigator = createStackNavigator(
   {
@@ -33,13 +45,17 @@ const MealsNavigator = createStackNavigator(
   },
   {
     // initialRouteName: 'Categories',
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : '',
-      },
-      headerTintColor:
-        Platform.OS === 'android' ? 'white' : Colors.primaryColor,
-    },
+    defaultNavigationOptions: defaultStackNavOptions,
+  }
+);
+
+const FavoritesNavigator = createStackNavigator(
+  {
+    Favorites: FavoritesScreen,
+    MealDetail: MealDetailScreen,
+  },
+  {
+    defaultNavigationOptions: defaultStackNavOptions,
   }
 );
 
@@ -57,7 +73,7 @@ const tabScreenConfig: NavigationRouteConfigMap<
     },
   },
   Favorites: {
-    screen: FavoritesScreen,
+    screen: FavoritesNavigator,
     navigationOptions: {
       tabBarIcon: (tabInfo) => (
         <Ionicons name="ios-star" size={25} color={tabInfo.tintColor} />
