@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Meal } from '../models/models';
 import { MEALS } from '../data/dummy-data';
@@ -7,6 +7,10 @@ interface MealsState {
   meals: Meal[];
   filteredMeals: Meal[];
   favoriteMeals: Meal[];
+}
+
+interface ToogleFavoritePayload {
+  mealId: string;
 }
 
 const initialState: MealsState = {
@@ -18,7 +22,21 @@ const initialState: MealsState = {
 const mealsSlice = createSlice({
   name: 'meals',
   initialState,
-  reducers: {},
+  reducers: {
+    toggleFavorite: (state, action: PayloadAction<ToogleFavoritePayload>) => {
+      const { mealId } = action.payload;
+      const existingIndex = state.favoriteMeals.findIndex(meal => meal.id === mealId);
+
+      if (existingIndex >= 0) {
+        state.favoriteMeals.splice(existingIndex, 1);
+      } else {
+        const mealToAdd = state.meals.find(meal => meal.id === mealId);
+        state.favoriteMeals.push(mealToAdd);
+      }
+    },
+  },
 });
+
+export const { toggleFavorite } = mealsSlice.actions;
 
 export default mealsSlice.reducer;

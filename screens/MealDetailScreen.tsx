@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { ScrollView, Image, View, Text, StyleSheet } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useSelector, useDispatch } from 'react-redux';
 
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import DefaultText from '../components/DefaultText';
-import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { toggleFavorite } from '../store/mealsSlice';
 
 const ListItem: React.FC = ({ children }) => {
   return (
@@ -18,9 +19,19 @@ const ListItem: React.FC = ({ children }) => {
 
 const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const availableMeals = useSelector((state: RootState) => state.meals.meals);
-  const mealId = navigation.getParam('mealId');
+  const dispatch = useDispatch();
 
+  const mealId = navigation.getParam('mealId');
   const selectedMeal = availableMeals.find(meal => meal.id === mealId);
+
+  const toggleDispatchHandler = useCallback(() => {
+    dispatch(toggleFavorite({ mealId }));
+  }, [dispatch, mealId]);
+
+  useEffect(() => {
+    navigation.setParams({ toggleFav: toggleDispatchHandler });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toggleDispatchHandler]);
 
   return (
     <ScrollView>
@@ -48,12 +59,13 @@ const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
 
 MealDetailScreen.navigationOptions = navigationData => {
   const mealTitle = navigationData.navigation.getParam('mealTitle');
+  const toggleFav = navigationData.navigation.getParam('toggleFav');
 
   return {
     headerTitle: mealTitle,
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item title="Favorite" iconName="ios-star" onPress={() => console.log('yolo')} />
+        <Item title="Favorite" iconName="ios-star" onPress={toggleFav} />
       </HeaderButtons>
     ),
   };
