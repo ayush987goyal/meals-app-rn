@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, ListRenderItemInfo } from 'react-native';
 import { NavigationRoute, NavigationParams } from 'react-navigation';
 import { NavigationStackProp } from 'react-navigation-stack';
 
@@ -12,25 +12,29 @@ interface MealListProps {
 }
 
 const MealList: React.FC<MealListProps> = ({ listData, navigation }) => {
+  const renderMealData = ({ item }: ListRenderItemInfo<Meal>) => {
+    return (
+      <MealItem
+        meal={item}
+        onSelectMeal={() =>
+          navigation.navigate({
+            routeName: 'MealDetail',
+            params: {
+              mealId: item.id,
+              mealTitle: item.title,
+            },
+          })
+        }
+      />
+    );
+  };
+
   return (
     <View style={styles.list}>
       <FlatList<Meal>
         data={listData}
         keyExtractor={item => item.id}
-        renderItem={itemData => (
-          <MealItem
-            meal={itemData.item}
-            onSelectMeal={() =>
-              navigation.navigate({
-                routeName: 'MealDetail',
-                params: {
-                  mealId: itemData.item.id,
-                  mealTitle: itemData.item.title,
-                },
-              })
-            }
-          />
-        )}
+        renderItem={renderMealData}
         style={{ width: '100%' }}
       />
     </View>

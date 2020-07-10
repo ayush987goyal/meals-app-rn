@@ -18,10 +18,14 @@ const ListItem: React.FC = ({ children }) => {
 };
 
 const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
-  const availableMeals = useSelector((state: RootState) => state.meals.meals);
-  const dispatch = useDispatch();
-
   const mealId = navigation.getParam('mealId');
+
+  const dispatch = useDispatch();
+  const availableMeals = useSelector((state: RootState) => state.meals.meals);
+  const isFavoriteMeal = useSelector((state: RootState) =>
+    state.meals.favoriteMeals.some(meal => meal.id === mealId)
+  );
+
   const selectedMeal = availableMeals.find(meal => meal.id === mealId);
 
   const toggleDispatchHandler = useCallback(() => {
@@ -32,6 +36,11 @@ const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
     navigation.setParams({ toggleFav: toggleDispatchHandler });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toggleDispatchHandler]);
+
+  useEffect(() => {
+    navigation.setParams({ isFav: isFavoriteMeal });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFavoriteMeal]);
 
   return (
     <ScrollView>
@@ -60,12 +69,17 @@ const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
 MealDetailScreen.navigationOptions = navigationData => {
   const mealTitle = navigationData.navigation.getParam('mealTitle');
   const toggleFav = navigationData.navigation.getParam('toggleFav');
+  const isFavorite = navigationData.navigation.getParam('isFav');
 
   return {
     headerTitle: mealTitle,
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item title="Favorite" iconName="ios-star" onPress={toggleFav} />
+        <Item
+          title="Favorite"
+          iconName={isFavorite ? 'ios-star' : 'ios-star-outline'}
+          onPress={toggleFav}
+        />
       </HeaderButtons>
     ),
   };
