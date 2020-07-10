@@ -3,9 +3,10 @@ import { ScrollView, Image, View, Text, StyleSheet } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import { MEALS } from '../data/dummy-data';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import DefaultText from '../components/DefaultText';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const ListItem: React.FC = ({ children }) => {
   return (
@@ -15,9 +16,11 @@ const ListItem: React.FC = ({ children }) => {
   );
 };
 
-const MealDetailScreen: NavigationStackScreenComponent = (props) => {
-  const mealId = props.navigation.getParam('mealId');
-  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
+  const availableMeals = useSelector((state: RootState) => state.meals.meals);
+  const mealId = navigation.getParam('mealId');
+
+  const selectedMeal = availableMeals.find(meal => meal.id === mealId);
 
   return (
     <ScrollView>
@@ -31,31 +34,26 @@ const MealDetailScreen: NavigationStackScreenComponent = (props) => {
 
       <Text style={styles.title}>Ingredients</Text>
 
-      {selectedMeal.ingredients.map((ing) => (
+      {selectedMeal.ingredients.map(ing => (
         <ListItem key={ing}>{ing}</ListItem>
       ))}
 
       <Text style={styles.title}>Steps</Text>
-      {selectedMeal.steps.map((step) => (
+      {selectedMeal.steps.map(step => (
         <ListItem key={step}>{step}</ListItem>
       ))}
     </ScrollView>
   );
 };
 
-MealDetailScreen.navigationOptions = (navigationData) => {
-  const mealId = navigationData.navigation.getParam('mealId');
-  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+MealDetailScreen.navigationOptions = navigationData => {
+  const mealTitle = navigationData.navigation.getParam('mealTitle');
 
   return {
-    headerTitle: selectedMeal.title,
+    headerTitle: mealTitle,
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item
-          title="Favorite"
-          iconName="ios-star"
-          onPress={() => console.log('yolo')}
-        />
+        <Item title="Favorite" iconName="ios-star" onPress={() => console.log('yolo')} />
       </HeaderButtons>
     ),
   };

@@ -12,11 +12,7 @@ interface FilterSwitchProps {
   onChange: (v: boolean) => void;
 }
 
-const FilterSwitch: React.FC<FilterSwitchProps> = ({
-  label,
-  value,
-  onChange,
-}) => {
+const FilterSwitch: React.FC<FilterSwitchProps> = ({ label, value, onChange }) => {
   return (
     <View style={styles.filterContainer}>
       <Text>{label}</Text>
@@ -58,28 +54,24 @@ const FiltersScreen: NavigationStackScreenComponent = ({ navigation }) => {
       <FilterSwitch
         label="Gluten-free"
         value={isGlutenFree}
-        onChange={(val) => setIsGlutenFree(val)}
+        onChange={val => setIsGlutenFree(val)}
       />
       <FilterSwitch
         label="Lactose-free"
         value={isLactoseFree}
-        onChange={(val) => setIsLactoseFree(val)}
+        onChange={val => setIsLactoseFree(val)}
       />
-      <FilterSwitch
-        label="Vegan"
-        value={isVegan}
-        onChange={(val) => setIsVegan(val)}
-      />
+      <FilterSwitch label="Vegan" value={isVegan} onChange={val => setIsVegan(val)} />
       <FilterSwitch
         label="Vegetarian"
         value={isVegetarian}
-        onChange={(val) => setIsVegetarian(val)}
+        onChange={val => setIsVegetarian(val)}
       />
     </View>
   );
 };
 
-FiltersScreen.navigationOptions = (navData) => {
+FiltersScreen.navigationOptions = navData => {
   return {
     headerTitle: 'Filter Meals',
     headerLeft: () => (
@@ -93,11 +85,7 @@ FiltersScreen.navigationOptions = (navData) => {
     ),
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item
-          title="Save"
-          iconName="ios-save"
-          onPress={navData.navigation.getParam('save')}
-        />
+        <Item title="Save" iconName="ios-save" onPress={navData.navigation.getParam('save')} />
       </HeaderButtons>
     ),
   };

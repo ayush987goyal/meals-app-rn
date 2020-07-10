@@ -14,11 +14,7 @@ interface CategoryGridTileProps {
   onSelect: () => void;
 }
 
-const CategoryGridTile: React.FC<CategoryGridTileProps> = ({
-  title,
-  color,
-  onSelect,
-}) => {
+const CategoryGridTile: React.FC<CategoryGridTileProps> = ({ title, color, onSelect }) => {
   let TouchableComp: any = TouchableOpacity;
 
   if (Platform.OS === 'android' && Platform.Version >= 21) {
@@ -45,10 +41,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 10,
     elevation: 5,
-    overflow:
-      Platform.OS === 'android' && Platform.Version >= 21
-        ? 'hidden'
-        : 'visible',
+    overflow: Platform.OS === 'android' && Platform.Version >= 21 ? 'hidden' : 'visible',
   },
   container: {
     flex: 1,

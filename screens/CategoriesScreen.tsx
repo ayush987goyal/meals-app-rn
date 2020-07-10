@@ -8,7 +8,7 @@ import { Category } from '../models/models';
 import CategoryGridTile from '../components/CategoryGridTile';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 
-const CategoriesScreen: NavigationStackScreenComponent = (props) => {
+const CategoriesScreen: NavigationStackScreenComponent = props => {
   const renderGridItem = (itemData: ListRenderItemInfo<Category>) => (
     <CategoryGridTile
       title={itemData.item.title}
@@ -26,7 +26,7 @@ const CategoriesScreen: NavigationStackScreenComponent = (props) => {
 
   return (
     <FlatList<Category>
-      keyExtractor={(item) => item.id}
+      keyExtractor={item => item.id}
       data={CATEGORIES}
       renderItem={renderGridItem}
       numColumns={2}
@@ -34,7 +34,7 @@ const CategoriesScreen: NavigationStackScreenComponent = (props) => {
   );
 };
 
-CategoriesScreen.navigationOptions = (navData) => {
+CategoriesScreen.navigationOptions = navData => {
   return {
     headerTitle: 'Meal Categories',
     headerLeft: () => (

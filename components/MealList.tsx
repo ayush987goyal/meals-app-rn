@@ -8,10 +8,7 @@ import MealItem from './MealItem';
 
 interface MealListProps {
   listData: Meal[];
-  navigation: NavigationStackProp<
-    NavigationRoute<NavigationParams>,
-    NavigationParams
-  >;
+  navigation: NavigationStackProp<NavigationRoute<NavigationParams>, NavigationParams>;
 }
 
 const MealList: React.FC<MealListProps> = ({ listData, navigation }) => {
@@ -19,14 +16,17 @@ const MealList: React.FC<MealListProps> = ({ listData, navigation }) => {
     <View style={styles.list}>
       <FlatList<Meal>
         data={listData}
-        keyExtractor={(item) => item.id}
-        renderItem={(itemData) => (
+        keyExtractor={item => item.id}
+        renderItem={itemData => (
           <MealItem
             meal={itemData.item}
             onSelectMeal={() =>
               navigation.navigate({
                 routeName: 'MealDetail',
-                params: { mealId: itemData.item.id },
+                params: {
+                  mealId: itemData.item.id,
+                  mealTitle: itemData.item.title,
+                },
               })
             }
           />

@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  HeaderButton,
-  HeaderButtonProps,
-} from 'react-navigation-header-buttons';
+import { HeaderButton, HeaderButtonProps } from 'react-navigation-header-buttons';
 import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -10,7 +7,7 @@ import Colors from '../constants/Colors';
 
 interface CustomHeaderButtonProps extends HeaderButtonProps {}
 
-const CustomHeaderButton: React.FC<CustomHeaderButtonProps> = (props) => {
+const CustomHeaderButton: React.FC<CustomHeaderButtonProps> = props => {
   return (
     <HeaderButton
       {...props}

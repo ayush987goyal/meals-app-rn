@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  ImageBackground,
-} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 
 import { Meal } from '../models/models';
 import DefaultText from './DefaultText';
@@ -21,10 +15,7 @@ const MealItem: React.FC<MealItemProps> = ({ meal, onSelectMeal }) => {
       <TouchableOpacity onPress={onSelectMeal}>
         <View>
           <View style={{ ...styles.mealRow, ...styles.mealHeader }}>
-            <ImageBackground
-              source={{ uri: meal.imageUrl }}
-              style={styles.bgImage}
-            >
+            <ImageBackground source={{ uri: meal.imageUrl }} style={styles.bgImage}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title} numberOfLines={1}>
                   {meal.title}
@@ -32,6 +23,7 @@ const MealItem: React.FC<MealItemProps> = ({ meal, onSelectMeal }) => {
               </View>
             </ImageBackground>
           </View>
+
           <View style={{ ...styles.mealRow, ...styles.mealDetail }}>
             <DefaultText>{meal.duration}m</DefaultText>
             <DefaultText>{meal.complexity.toUpperCase()}</DefaultText>

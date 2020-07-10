@@ -7,10 +7,7 @@ import {
   NavigationRoute,
   NavigationScreenConfig,
 } from 'react-navigation';
-import {
-  createStackNavigator,
-  NavigationStackOptions,
-} from 'react-navigation-stack';
+import { createStackNavigator, NavigationStackOptions } from 'react-navigation-stack';
 import {
   createBottomTabNavigator,
   NavigationBottomTabOptions,
@@ -29,10 +26,7 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import FiltersScreen from '../screens/FiltersScreen';
 import Colors from '../constants/Colors';
 
-const defaultStackNavOptions: NavigationScreenConfig<
-  NavigationStackOptions,
-  any
-> = {
+const defaultStackNavOptions: NavigationScreenConfig<NavigationStackOptions, any> = {
   headerStyle: {
     backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : '',
   },
@@ -76,9 +70,7 @@ const tabScreenConfig: NavigationRouteConfigMap<
   Meals: {
     screen: MealsNavigator,
     navigationOptions: {
-      tabBarIcon: (tabInfo) => (
-        <Ionicons name="ios-restaurant" size={25} color={tabInfo.tintColor} />
-      ),
+      tabBarIcon: tabInfo => <Ionicons name="ios-restaurant" size={25} color={tabInfo.tintColor} />,
       tabBarColor: Colors.primaryColor,
       tabBarLabel:
         Platform.OS === 'android' ? (
@@ -91,9 +83,7 @@ const tabScreenConfig: NavigationRouteConfigMap<
   Favorites: {
     screen: FavoritesNavigator,
     navigationOptions: {
-      tabBarIcon: (tabInfo) => (
-        <Ionicons name="ios-star" size={25} color={tabInfo.tintColor} />
-      ),
+      tabBarIcon: tabInfo => <Ionicons name="ios-star" size={25} color={tabInfo.tintColor} />,
       tabBarColor: Colors.accentColor,
       tabBarLabel:
         Platform.OS === 'android' ? (
