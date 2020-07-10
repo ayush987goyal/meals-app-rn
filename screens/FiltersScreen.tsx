@@ -5,6 +5,9 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import Colors from '../constants/Colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setFilters } from '../store/mealsSlice';
 
 interface FilterSwitchProps {
   label: string;
@@ -27,21 +30,26 @@ const FilterSwitch: React.FC<FilterSwitchProps> = ({ label, value, onChange }) =
 };
 
 const FiltersScreen: NavigationStackScreenComponent = ({ navigation }) => {
-  const [isGlutenFree, setIsGlutenFree] = useState(false);
-  const [isLactoseFree, setIsLactoseFree] = useState(false);
-  const [isVegan, setIsVegan] = useState(false);
-  const [isVegetarian, setIsVegetarian] = useState(false);
+  const dispatch = useDispatch();
+  const mealFilters = useSelector((state: RootState) => state.meals.filters);
+
+  const [isGlutenFree, setIsGlutenFree] = useState(mealFilters.glutenFree);
+  const [isLactoseFree, setIsLactoseFree] = useState(mealFilters.lactoseFree);
+  const [isVegan, setIsVegan] = useState(mealFilters.vegan);
+  const [isVegetarian, setIsVegetarian] = useState(mealFilters.vegetarian);
 
   const saveFilters = useCallback(() => {
-    const appliedFilters = {
-      glutenFree: isGlutenFree,
-      lactoseFree: isLactoseFree,
-      vegan: isVegan,
-      vegetarian: isVegetarian,
-    };
-
-    console.log(appliedFilters);
-  }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian]);
+    dispatch(
+      setFilters({
+        filters: {
+          glutenFree: isGlutenFree,
+          lactoseFree: isLactoseFree,
+          vegan: isVegan,
+          vegetarian: isVegetarian,
+        },
+      })
+    );
+  }, [dispatch, isGlutenFree, isLactoseFree, isVegan, isVegetarian]);
 
   useEffect(() => {
     navigation.setParams({ save: saveFilters });

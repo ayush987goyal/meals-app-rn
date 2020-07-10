@@ -3,20 +3,38 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Meal } from '../models/models';
 import { MEALS } from '../data/dummy-data';
 
+interface MealFilters {
+  glutenFree: boolean;
+  lactoseFree: boolean;
+  vegan: boolean;
+  vegetarian: boolean;
+}
+
 interface MealsState {
   meals: Meal[];
   filteredMeals: Meal[];
   favoriteMeals: Meal[];
+  filters: MealFilters;
 }
 
 interface ToogleFavoritePayload {
   mealId: string;
 }
 
+interface SetFiltersPayload {
+  filters: MealFilters;
+}
+
 const initialState: MealsState = {
   meals: MEALS,
   filteredMeals: MEALS,
   favoriteMeals: [],
+  filters: {
+    glutenFree: false,
+    lactoseFree: false,
+    vegan: false,
+    vegetarian: false,
+  },
 };
 
 const mealsSlice = createSlice({
@@ -34,9 +52,24 @@ const mealsSlice = createSlice({
         state.favoriteMeals.push(mealToAdd);
       }
     },
+    setFilters: (state, action: PayloadAction<SetFiltersPayload>) => {
+      const { filters } = action.payload;
+
+      const filteredMeals = state.meals.filter(meal => {
+        if (filters.glutenFree && !meal.isGlutenFree) return false;
+        if (filters.lactoseFree && !meal.isLactoseFree) return false;
+        if (filters.vegan && !meal.isVegan) return false;
+        if (filters.vegetarian && !meal.isVegetarian) return false;
+
+        return true;
+      });
+
+      state.filteredMeals = filteredMeals;
+      state.filters = filters;
+    },
   },
 });
 
-export const { toggleFavorite } = mealsSlice.actions;
+export const { toggleFavorite, setFilters } = mealsSlice.actions;
 
 export default mealsSlice.reducer;
