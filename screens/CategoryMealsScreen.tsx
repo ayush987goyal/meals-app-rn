@@ -1,18 +1,32 @@
-import React from 'react';
-import { NavigationStackScreenComponent } from 'react-navigation-stack';
+import React, { useLayoutEffect } from 'react';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
 import { View, StyleSheet } from 'react-native';
 
 import { CATEGORIES } from '../data/dummy-data';
 import { RootState } from '../store';
+import { MealsStackParamsList } from '../navigation/AppNavigator';
 import MealList from '../components/MealList';
 import DefaultText from '../components/DefaultText';
 
-const CategoryMealScreen: NavigationStackScreenComponent = props => {
+interface CategoryMealScreenProps {
+  navigation: StackNavigationProp<MealsStackParamsList, 'CategoryMeals'>;
+  route: RouteProp<MealsStackParamsList, 'CategoryMeals'>;
+}
+
+const CategoryMealScreen: React.FC<CategoryMealScreenProps> = ({ navigation, route }) => {
   const availableMeals = useSelector((state: RootState) => state.meals.filteredMeals);
-  const catId = props.navigation.getParam('categoryId');
+  const catId = route.params.categoryId;
+  const selectedCategory = CATEGORIES.find(cat => cat.id === catId);
 
   const displayedMeals = availableMeals.filter(meal => meal.categoryIds.includes(catId));
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: selectedCategory.title,
+    });
+  }, [navigation, selectedCategory.title]);
 
   if (!displayedMeals || !displayedMeals.length) {
     return (
@@ -22,16 +36,7 @@ const CategoryMealScreen: NavigationStackScreenComponent = props => {
     );
   }
 
-  return <MealList listData={displayedMeals} navigation={props.navigation} />;
-};
-
-CategoryMealScreen.navigationOptions = navigationData => {
-  const catId = navigationData.navigation.getParam('categoryId');
-  const selectedCategory = CATEGORIES.find(cat => cat.id === catId);
-
-  return {
-    headerTitle: selectedCategory.title,
-  };
+  return <MealList listData={displayedMeals} />;
 };
 
 const styles = StyleSheet.create({

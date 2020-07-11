@@ -1,11 +1,13 @@
+import 'react-native-gesture-handler';
 import React, { useState } from 'react';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import { screensEnabled } from 'react-native-screens';
 import { Provider } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
 
 import store from './store';
-import MealsNavigator from './navigation/MealsNavigator';
+import AppNavigator from './navigation/AppNavigator';
 
 screensEnabled();
 
@@ -20,17 +22,14 @@ export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
 
   if (!fontLoaded) {
-    return (
-      <AppLoading
-        startAsync={fetchFonts}
-        onFinish={() => setFontLoaded(true)}
-      />
-    );
+    return <AppLoading startAsync={fetchFonts} onFinish={() => setFontLoaded(true)} />;
   }
 
   return (
-    <Provider store={store}>
-      <MealsNavigator />
-    </Provider>
+    <NavigationContainer>
+      <Provider store={store}>
+        <AppNavigator />
+      </Provider>
+    </NavigationContainer>
   );
 }

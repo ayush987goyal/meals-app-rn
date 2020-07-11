@@ -1,13 +1,15 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback, useLayoutEffect } from 'react';
 import { ScrollView, Image, View, Text, StyleSheet } from 'react-native';
-import { NavigationStackScreenComponent } from 'react-navigation-stack';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector, useDispatch } from 'react-redux';
 
-import CustomHeaderButton from '../components/CustomHeaderButton';
-import DefaultText from '../components/DefaultText';
 import { RootState } from '../store';
 import { toggleFavorite } from '../store/mealsSlice';
+import { MealsStackParamsList } from '../navigation/AppNavigator';
+import CustomHeaderButton from '../components/CustomHeaderButton';
+import DefaultText from '../components/DefaultText';
 
 const ListItem: React.FC = ({ children }) => {
   return (
@@ -17,8 +19,13 @@ const ListItem: React.FC = ({ children }) => {
   );
 };
 
-const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
-  const mealId = navigation.getParam('mealId');
+interface MealDetailScreenProps {
+  navigation: StackNavigationProp<MealsStackParamsList, 'MealDetail'>;
+  route: RouteProp<MealsStackParamsList, 'MealDetail'>;
+}
+
+const MealDetailScreen: React.FC<MealDetailScreenProps> = ({ navigation, route }) => {
+  const { mealId } = route.params;
 
   const dispatch = useDispatch();
   const availableMeals = useSelector((state: RootState) => state.meals.meals);
@@ -32,15 +39,20 @@ const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
     dispatch(toggleFavorite({ mealId }));
   }, [dispatch, mealId]);
 
-  useEffect(() => {
-    navigation.setParams({ toggleFav: toggleDispatchHandler });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toggleDispatchHandler]);
-
-  useEffect(() => {
-    navigation.setParams({ isFav: isFavoriteMeal });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFavoriteMeal]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: selectedMeal.title,
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            title="Favorite"
+            iconName={isFavoriteMeal ? 'ios-star' : 'ios-star-outline'}
+            onPress={toggleDispatchHandler}
+          />
+        </HeaderButtons>
+      ),
+    });
+  }, [isFavoriteMeal, navigation, selectedMeal.title, toggleDispatchHandler]);
 
   return (
     <ScrollView>
@@ -64,25 +76,6 @@ const MealDetailScreen: NavigationStackScreenComponent = ({ navigation }) => {
       ))}
     </ScrollView>
   );
-};
-
-MealDetailScreen.navigationOptions = navigationData => {
-  const mealTitle = navigationData.navigation.getParam('mealTitle');
-  const toggleFav = navigationData.navigation.getParam('toggleFav');
-  const isFavorite = navigationData.navigation.getParam('isFav');
-
-  return {
-    headerTitle: mealTitle,
-    headerRight: () => (
-      <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item
-          title="Favorite"
-          iconName={isFavorite ? 'ios-star' : 'ios-star-outline'}
-          onPress={toggleFav}
-        />
-      </HeaderButtons>
-    ),
-  };
 };
 
 const styles = StyleSheet.create({

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { NavigationStackScreenComponent } from 'react-navigation-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector } from 'react-redux';
 
@@ -9,8 +10,22 @@ import MealList from '../components/MealList';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import DefaultText from '../components/DefaultText';
 
-const FavoritesScreen: NavigationStackScreenComponent = props => {
+interface FavoritesScreenProps {
+  navigation: StackNavigationProp<{}> & DrawerNavigationProp<{}>;
+}
+
+const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ navigation }) => {
   const favoriteMeals = useSelector((state: RootState) => state.meals.favoriteMeals);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item title="Menu" iconName="ios-menu" onPress={() => navigation.toggleDrawer()} />
+        </HeaderButtons>
+      ),
+    });
+  }, [navigation]);
 
   if (!favoriteMeals || !favoriteMeals.length) {
     return (
@@ -20,22 +35,7 @@ const FavoritesScreen: NavigationStackScreenComponent = props => {
     );
   }
 
-  return <MealList listData={favoriteMeals} navigation={props.navigation} />;
-};
-
-FavoritesScreen.navigationOptions = navData => {
-  return {
-    headerTitle: 'Your Favorites',
-    headerLeft: () => (
-      <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item
-          title="Menu"
-          iconName="ios-menu"
-          onPress={() => (navData.navigation as any).toggleDrawer()}
-        />
-      </HeaderButtons>
-    ),
-  };
+  return <MealList listData={favoriteMeals} />;
 };
 
 const styles = StyleSheet.create({

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, Switch, Platform } from 'react-native';
-import { NavigationStackScreenComponent } from 'react-navigation-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import CustomHeaderButton from '../components/CustomHeaderButton';
@@ -29,7 +30,11 @@ const FilterSwitch: React.FC<FilterSwitchProps> = ({ label, value, onChange }) =
   );
 };
 
-const FiltersScreen: NavigationStackScreenComponent = ({ navigation }) => {
+interface FiltersScreenProps {
+  navigation: StackNavigationProp<{}> & DrawerNavigationProp<{}>;
+}
+
+const FiltersScreen: React.FC<FiltersScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
   const mealFilters = useSelector((state: RootState) => state.meals.filters);
 
@@ -51,10 +56,20 @@ const FiltersScreen: NavigationStackScreenComponent = ({ navigation }) => {
     );
   }, [dispatch, isGlutenFree, isLactoseFree, isVegan, isVegetarian]);
 
-  useEffect(() => {
-    navigation.setParams({ save: saveFilters });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saveFilters]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item title="Menu" iconName="ios-menu" onPress={() => navigation.toggleDrawer()} />
+        </HeaderButtons>
+      ),
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item title="Save" iconName="ios-save" onPress={saveFilters} />
+        </HeaderButtons>
+      ),
+    });
+  }, [navigation, saveFilters]);
 
   return (
     <View style={styles.screen}>
@@ -77,26 +92,6 @@ const FiltersScreen: NavigationStackScreenComponent = ({ navigation }) => {
       />
     </View>
   );
-};
-
-FiltersScreen.navigationOptions = navData => {
-  return {
-    headerTitle: 'Filter Meals',
-    headerLeft: () => (
-      <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item
-          title="Menu"
-          iconName="ios-menu"
-          onPress={() => (navData.navigation as any).toggleDrawer()}
-        />
-      </HeaderButtons>
-    ),
-    headerRight: () => (
-      <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item title="Save" iconName="ios-save" onPress={navData.navigation.getParam('save')} />
-      </HeaderButtons>
-    ),
-  };
 };
 
 const styles = StyleSheet.create({

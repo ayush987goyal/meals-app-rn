@@ -1,28 +1,26 @@
 import React from 'react';
 import { StyleSheet, View, FlatList, ListRenderItemInfo } from 'react-native';
-import { NavigationRoute, NavigationParams } from 'react-navigation';
-import { NavigationStackProp } from 'react-navigation-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 import { Meal } from '../models/models';
 import MealItem from './MealItem';
+import { useNavigation } from '@react-navigation/native';
+import { MealsStackParamsList } from '../navigation/AppNavigator';
 
 interface MealListProps {
   listData: Meal[];
-  navigation: NavigationStackProp<NavigationRoute<NavigationParams>, NavigationParams>;
 }
 
-const MealList: React.FC<MealListProps> = ({ listData, navigation }) => {
+const MealList: React.FC<MealListProps> = ({ listData }) => {
+  const navigation = useNavigation<StackNavigationProp<MealsStackParamsList, 'Categories'>>();
+
   const renderMealData = ({ item }: ListRenderItemInfo<Meal>) => {
     return (
       <MealItem
         meal={item}
         onSelectMeal={() =>
-          navigation.navigate({
-            routeName: 'MealDetail',
-            params: {
-              mealId: item.id,
-              mealTitle: item.title,
-            },
+          navigation.navigate('MealDetail', {
+            mealId: item.id,
           })
         }
       />
